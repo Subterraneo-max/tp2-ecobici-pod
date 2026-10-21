@@ -1,0 +1,30 @@
+# Entornos virtuales y cachés de Python
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editores, herramientas locales y sistema operativo
+.vscode/
+.idea/
+.claude/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secretos y configuración local (nunca se versionan)
+.env
+.env.*
+*.key
+*.pem
+
+# Material de la cátedra: se consulta localmente, no se publica
+referencias/
+
+# Archivos temporales
+*.tmp
+*.log
