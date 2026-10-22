@@ -193,6 +193,15 @@ class PruebasLimpieza(unittest.TestCase):
         self.assertEqual(validos.loc[0, 'viaje_id'], 'ECO-0001')
         self.assertEqual(validos.loc[0, 'estacion_origen'], 'Estacion_A')
 
+    def test_valores_no_textuales_se_validan_por_su_texto(self):
+        # Defecto D5: un id entero o un Timestamp se informaban como faltantes.
+        validos, rechazados = limpiar_viajes(tabla(
+            viaje(1, inicio=pd.Timestamp('2026-10-01 08:00:00')),
+            viaje(2, viaje_id=2)))
+        self.assertEqual(list(validos['viaje_id']), ['ECO-0001'])
+        self.assertEqual(list(rechazados['motivo']),
+                         ['viaje_id con formato inválido'])
+
     def test_sin_viajes_validos_detiene_el_flujo(self):
         with self.assertRaisesRegex(ErrorDatos, 'No quedan viajes válidos'):
             limpiar_viajes(tabla(viaje(1, inicio='x'), viaje(2, fin=None)))

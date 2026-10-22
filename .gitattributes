@@ -1,0 +1,4 @@
+# Datos y resultados con fin de línea LF en todos los sistemas operativos,
+# para que los archivos sean idénticos byte a byte al regenerarlos.
+*.csv text eol=lf
+*.json text eol=lf

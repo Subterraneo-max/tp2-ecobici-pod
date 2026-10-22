@@ -64,17 +64,25 @@ def validar_esquema(tabla):
     """Detiene el flujo si la tabla no permite el análisis."""
     if not isinstance(tabla, pd.DataFrame):
         raise TypeError('Se esperaba un DataFrame de pandas.')
+    # Primero la cantidad de filas: un JSON [] no tiene columnas, pero el
+    # problema real es que no contiene registros.
+    if len(tabla) == 0:
+        raise ErrorDatos('La tabla de entrada está vacía: no hay registros.')
     faltan = [columna for columna in COLUMNAS if columna not in tabla.columns]
     if faltan:
         raise ErrorDatos('Faltan columnas: ' + ', '.join(faltan))
-    if tabla.empty:
-        raise ErrorDatos('La tabla de entrada está vacía.')
 
 
 def _normalizar_texto(valor):
-    if not isinstance(valor, str):
+    """Texto sin espacios externos; faltantes y textos vacíos pasan a None.
+
+    Un valor que no es texto (por ejemplo, un número o un Timestamp en un
+    DataFrame construido a mano) se valida por su representación textual:
+    no se lo confunde con un dato faltante.
+    """
+    if pd.api.types.is_scalar(valor) and pd.isna(valor):
         return None
-    valor = valor.strip()
+    valor = str(valor).strip()
     return valor if valor else None
 
 
@@ -304,9 +312,13 @@ def exportar_resultados(reporte, rechazados, resumen, directorio):
         'rechazados': directorio / 'registros_rechazados.csv',
         'resumen': directorio / 'resumen.json',
     }
-    reporte.to_csv(rutas['reporte'], index=False, encoding='utf-8')
-    rechazados.to_csv(rutas['rechazados'], index=False, encoding='utf-8')
-    with rutas['resumen'].open('w', encoding='utf-8') as archivo:
+    # Fin de línea '\n' explícito: sin él, pandas y open() usan '\r\n' en
+    # Windows y los archivos dependerían del sistema operativo.
+    reporte.to_csv(rutas['reporte'], index=False, encoding='utf-8',
+                   lineterminator='\n')
+    rechazados.to_csv(rutas['rechazados'], index=False, encoding='utf-8',
+                      lineterminator='\n')
+    with rutas['resumen'].open('w', encoding='utf-8', newline='\n') as archivo:
         json.dump(resumen, archivo, ensure_ascii=False, indent=2)
         archivo.write('\n')
     return rutas

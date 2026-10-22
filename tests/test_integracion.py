@@ -100,6 +100,15 @@ class PruebasIntegracion(unittest.TestCase):
         self.assertEqual(releido['registros'],
                          {'originales': 88, 'validos': 80, 'rechazados': 8})
 
+    def test_exportacion_independiente_del_sistema_operativo(self):
+        # Defecto D6: en Windows se escribían fines de línea \r\n.
+        reporte, rechazados, resumen = self.ejecutar(
+            FuenteCSV(DATA / 'viajes.csv'))
+        rutas = exportar_resultados(reporte, rechazados, resumen, self.directorio)
+        for ruta in rutas.values():
+            with self.subTest(archivo=ruta.name):
+                self.assertNotIn(b'\r\n', ruta.read_bytes())
+
     def test_reporte_con_datos_conocidos(self):
         tabla = pd.DataFrame(VIAJES_CONOCIDOS, columns=COLUMNAS)
         ruta_csv = self.directorio / 'conocidos.csv'

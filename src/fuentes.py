@@ -33,8 +33,10 @@ class FuenteDatos(ABC):
 
     def comprobar_archivo(self):
         """Falla con un mensaje claro si el archivo no existe o está vacío."""
-        if not self.ruta.is_file():
+        if not self.ruta.exists():
             raise FileNotFoundError(f'No existe el archivo: {self.ruta}')
+        if not self.ruta.is_file():
+            raise ErrorDatos(f'La ruta no es un archivo: {self.ruta}')
         if self.ruta.stat().st_size == 0:
             raise ErrorDatos(f'El archivo está vacío: {self.ruta.name}')
 
@@ -74,7 +76,9 @@ class FuenteCSV(FuenteDatos):
         try:
             # Sólo la celda vacía se interpreta como faltante: textos como
             # "NA" o "null" se conservan y luego los evalúa la validación.
-            tabla = pd.read_csv(self.ruta, dtype=str, encoding='utf-8',
+            # utf-8-sig acepta archivos con o sin BOM (marca que agregan
+            # algunos editores de Windows al guardar en UTF-8).
+            tabla = pd.read_csv(self.ruta, dtype=str, encoding='utf-8-sig',
                                 keep_default_na=False, na_values=[''])
         except pd.errors.EmptyDataError as error:
             raise ErrorDatos(
@@ -97,7 +101,7 @@ class FuenteJSON(FuenteDatos):
     def cargar(self):
         self.comprobar_archivo()
         try:
-            with self.ruta.open(encoding='utf-8') as archivo:
+            with self.ruta.open(encoding='utf-8-sig') as archivo:
                 contenido = json.load(archivo)
         except json.JSONDecodeError as error:
             raise ErrorDatos(

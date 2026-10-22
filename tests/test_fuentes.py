@@ -8,6 +8,7 @@ import pandas as pd
 
 from src.fuentes import (ErrorDatos, FuenteCSV, FuenteDatos, FuenteJSON,
                          crear_fuente)
+from src.pipeline import validar_esquema
 
 DATA = Path(__file__).resolve().parent.parent / 'data'
 COLUMNAS = ['viaje_id', 'inicio', 'fin', 'estacion_origen', 'estacion_destino']
@@ -106,6 +107,30 @@ class PruebasFuentes(unittest.TestCase):
         self.assertIsInstance(crear_fuente('a.JSON'), FuenteJSON)
         with self.assertRaisesRegex(ErrorDatos, 'Formato no soportado'):
             crear_fuente('a.xlsx')
+
+    def test_csv_y_json_con_bom_utf8(self):
+        # Defecto D2: el JSON con BOM se rechazaba como mal formado.
+        fila = ('ECO-0001', '2026-10-01 08:00:00', '2026-10-01 08:20:00',
+                'Estacion_A', 'Estacion_B')
+        csv = self.directorio / 'bom.csv'
+        csv.write_text(','.join(COLUMNAS) + '\n' + ','.join(fila) + '\n',
+                       encoding='utf-8-sig')
+        json = self.directorio / 'bom.json'
+        json.write_text(pd.DataFrame([fila], columns=COLUMNAS)
+                        .to_json(orient='records'), encoding='utf-8-sig')
+        pd.testing.assert_frame_equal(FuenteCSV(csv).cargar(),
+                                      FuenteJSON(json).cargar())
+
+    def test_json_lista_vacia_se_informa_como_tabla_vacia(self):
+        # Defecto D3: se informaba "Faltan columnas" para un JSON sin registros.
+        ruta = self.escribir('vacia.json', '[]')
+        with self.assertRaisesRegex(ErrorDatos, 'vacía'):
+            validar_esquema(FuenteJSON(ruta).cargar())
+
+    def test_ruta_que_es_un_directorio(self):
+        # Defecto D4: un directorio se informaba como archivo inexistente.
+        with self.assertRaisesRegex(ErrorDatos, 'no es un archivo'):
+            FuenteCSV(self.directorio).cargar()
 
     def test_fuente_abstracta_no_se_instancia(self):
         with self.assertRaises(TypeError):
