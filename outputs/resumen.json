@@ -1,0 +1,28 @@
+{
+  "archivo_entrada": "viajes.csv",
+  "periodo": {
+    "desde": "2026-10-01",
+    "hasta": "2026-10-07",
+    "criterio": "viajes cuyo inicio cae entre ambas fechas, con los dos días completos incluidos"
+  },
+  "registros": {
+    "originales": 88,
+    "validos": 80,
+    "rechazados": 8
+  },
+  "viajes_seleccionados": 48,
+  "estaciones_en_reporte": 6,
+  "movimientos": {
+    "total_salidas": 48,
+    "total_llegadas": 48,
+    "suma_balances": 0
+  },
+  "comprobaciones": {
+    "originales_igual_validos_mas_rechazados": true,
+    "total_salidas_igual_viajes": true,
+    "total_llegadas_igual_viajes": true,
+    "suma_balances_igual_cero": true,
+    "balance_igual_llegadas_menos_salidas": true,
+    "estaciones_sin_repetir": true
+  }
+}

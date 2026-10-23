@@ -1,0 +1,9 @@
+registro,viaje_id,inicio,fin,estacion_origen,estacion_destino,motivo
+1,ECO-0086,2026-10-12 19:00:00,2026-10-12 19:35:00,Estacion_C,,estacion_destino faltante
+24,ECO-0081,2026-10-03 09:00:00,2026-10-03 09:20:00,Estacion_A,Estacion_B,viaje_id duplicado
+39,ECO-87,2026-10-14 12:00:00,2026-10-14 12:30:00,Estacion_A,Estacion_E,viaje_id con formato inválido
+41,ECO-0083,2026-10-06 18:40:00,2026-10-06 25:10:00,Estacion_E,Estacion_F,fin inválido
+54,ECO-0084,2026-10-09 14:30:00,2026-10-09 14:05:00,Estacion_F,Estacion_A,fin no posterior al inicio
+73,ECO-0085,2026-10-11 07:45:00,2026-10-11 08:10:00,,Estacion_D,estacion_origen faltante
+78,ECO-0082,2026-09-31 08:00:00,2026-10-01 08:30:00,Estacion_B,Estacion_C,inicio inválido
+85,ECO-0081,2026-10-03 10:15:00,2026-10-03 10:40:00,Estacion_D,Estacion_A,viaje_id duplicado

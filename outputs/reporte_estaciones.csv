@@ -1,0 +1,7 @@
+estacion,salidas,llegadas,balance
+Estacion_A,7,11,4
+Estacion_B,4,12,8
+Estacion_C,12,8,-4
+Estacion_D,6,7,1
+Estacion_E,13,2,-11
+Estacion_F,6,8,2
