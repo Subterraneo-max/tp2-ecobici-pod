@@ -1,4 +1,4 @@
-"""Pruebas de la clase BalanceEstacion y del balance por estación (categoría D)."""
+"""Pruebas de BalanceEstacion y del balance por estación (categoría D)."""
 
 import unittest
 from pathlib import Path
@@ -108,8 +108,10 @@ class PruebasMovimientos(unittest.TestCase):
                                  {'salidas': 1, 'llegadas': 1, 'balance': 0})
 
     def test_conservacion_de_llegadas_y_salidas(self):
-        tabla = viajes(('Estacion_A', 'Estacion_B'), ('Estacion_A', 'Estacion_C'),
-                       ('Estacion_C', 'Estacion_C'), ('Estacion_B', 'Estacion_A'),
+        tabla = viajes(('Estacion_A', 'Estacion_B'),
+                       ('Estacion_A', 'Estacion_C'),
+                       ('Estacion_C', 'Estacion_C'),
+                       ('Estacion_B', 'Estacion_A'),
                        ('Estacion_D', 'Estacion_A'))
         reporte = reporte_de(tabla)
         self.assertEqual(int(reporte['llegadas'].sum()), 5)

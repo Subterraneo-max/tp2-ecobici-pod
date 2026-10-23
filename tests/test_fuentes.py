@@ -122,7 +122,7 @@ class PruebasFuentes(unittest.TestCase):
                                       FuenteJSON(json).cargar())
 
     def test_json_lista_vacia_se_informa_como_tabla_vacia(self):
-        # Defecto D3: se informaba "Faltan columnas" para un JSON sin registros.
+        # Defecto D3: un JSON sin registros informaba "Faltan columnas".
         ruta = self.escribir('vacia.json', '[]')
         with self.assertRaisesRegex(ErrorDatos, 'vacía'):
             validar_esquema(FuenteJSON(ruta).cargar())

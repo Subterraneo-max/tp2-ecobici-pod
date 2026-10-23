@@ -47,7 +47,9 @@ def id_valido(valor):
 
 def fecha_hora_valida(valor):
     """Comprueba la forma AAAA-MM-DD HH:MM:SS y que exista en el calendario."""
-    if not isinstance(valor, str) or PATRON_FECHA_HORA.fullmatch(valor) is None:
+    if not isinstance(valor, str):
+        return False
+    if PATRON_FECHA_HORA.fullmatch(valor) is None:
         return False
     try:
         datetime.strptime(valor, FORMATO_FECHA_HORA)
@@ -87,7 +89,7 @@ def _normalizar_texto(valor):
 
 
 def normalizar_campos(tabla):
-    """Copia con espacios externos eliminados y textos vacíos como faltantes."""
+    """Copia sin espacios externos y con los textos vacíos como faltantes."""
     return tabla.map(_normalizar_texto)
 
 
@@ -101,7 +103,8 @@ def validar_recorridos(tabla):
     ids = tabla['viaje_id']
     id_presente = ids.map(texto_presente)
     controles['viaje_id faltante'] = ~id_presente
-    controles['viaje_id con formato inválido'] = id_presente & ~ids.map(id_valido)
+    controles['viaje_id con formato inválido'] = (
+        id_presente & ~ids.map(id_valido))
     # Política de duplicados: se rechazan TODAS las filas con un id repetido,
     # en lugar de elegir arbitrariamente cuál conservar.
     controles['viaje_id duplicado'] = id_presente & ids.duplicated(keep=False)
@@ -161,14 +164,15 @@ def limpiar_viajes(tabla):
 # ---------------------------------------------------------------------------
 
 def convertir_fecha(texto):
-    """Convierte un parámetro AAAA-MM-DD en date, con mensajes comprensibles."""
+    """Convierte un parámetro AAAA-MM-DD en date, con mensajes claros."""
     if not isinstance(texto, str) or PATRON_FECHA.fullmatch(texto) is None:
         raise ErrorDatos(f'Fecha con formato inválido: {texto!r}. '
                          'Use AAAA-MM-DD, por ejemplo 2026-10-01.')
     try:
         return datetime.strptime(texto, FORMATO_FECHA).date()
     except ValueError:
-        raise ErrorDatos(f'La fecha {texto} no existe en el calendario.') from None
+        raise ErrorDatos(
+            f'La fecha {texto} no existe en el calendario.') from None
 
 
 def _como_fecha(valor):
@@ -212,7 +216,9 @@ def seleccionar_periodo(viajes, desde, hasta):
 
 def listar_estaciones(viajes):
     """Estaciones que aparecen como origen o destino, en orden alfabético."""
-    return sorted(set(viajes['estacion_origen']) | set(viajes['estacion_destino']))
+    origenes = set(viajes['estacion_origen'])
+    destinos = set(viajes['estacion_destino'])
+    return sorted(origenes | destinos)
 
 
 def registrar_movimientos(viajes, estaciones=()):
@@ -250,11 +256,13 @@ def verificar_balance(reporte, cantidad_viajes):
         'total_llegadas_igual_viajes': llegadas == cantidad_viajes,
         'suma_balances_igual_cero': int(reporte['balance'].sum()) == 0,
         'balance_igual_llegadas_menos_salidas': bool(
-            (reporte['balance'] == reporte['llegadas'] - reporte['salidas']).all()
+            (reporte['balance']
+             == reporte['llegadas'] - reporte['salidas']).all()
         ),
         'estaciones_sin_repetir': bool(reporte['estacion'].is_unique),
     }
-    return _exigir(comprobaciones, 'El reporte de estaciones no es consistente')
+    return _exigir(comprobaciones,
+                   'El reporte de estaciones no es consistente')
 
 
 def verificar_registros(originales, validos, rechazados):
@@ -263,11 +271,13 @@ def verificar_registros(originales, validos, rechazados):
         'originales_igual_validos_mas_rechazados':
             originales == validos + rechazados,
     }
-    return _exigir(comprobaciones, 'Se perdieron registros durante la limpieza')
+    return _exigir(comprobaciones,
+                   'Se perdieron registros durante la limpieza')
 
 
 def _exigir(comprobaciones, mensaje):
-    fallidas = [nombre for nombre, cumple in comprobaciones.items() if not cumple]
+    fallidas = [nombre for nombre, cumple in comprobaciones.items()
+                if not cumple]
     if fallidas:
         raise ErrorDatos(f'{mensaje}: ' + ', '.join(fallidas))
     return comprobaciones
@@ -277,7 +287,8 @@ def _exigir(comprobaciones, mensaje):
 # Resumen, exportación y coordinación del flujo
 # ---------------------------------------------------------------------------
 
-def construir_resumen(archivo, desde, hasta, cantidades, reporte, comprobaciones):
+def construir_resumen(archivo, desde, hasta, cantidades, reporte,
+                      comprobaciones):
     """Diccionario serializable con los totales y controles del análisis."""
     return {
         'archivo_entrada': archivo,

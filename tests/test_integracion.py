@@ -86,13 +86,15 @@ class PruebasIntegracion(unittest.TestCase):
         pd.testing.assert_frame_equal(pd.read_csv(rutas['reporte']),
                                       ESPERADO_PRIMERA_SEMANA)
         releidos = pd.read_csv(rutas['rechazados'], dtype=str)
-        self.assertEqual(list(releidos.columns), ['registro'] + COLUMNAS + ['motivo'])
+        self.assertEqual(list(releidos.columns),
+                         ['registro'] + COLUMNAS + ['motivo'])
         self.assertEqual(len(releidos), 8)
 
     def test_exportacion_de_json(self):
         reporte, rechazados, resumen = self.ejecutar(
             FuenteCSV(DATA / 'viajes.csv'))
-        rutas = exportar_resultados(reporte, rechazados, resumen, self.directorio)
+        rutas = exportar_resultados(reporte, rechazados, resumen,
+                                    self.directorio)
         with rutas['resumen'].open(encoding='utf-8') as archivo:
             releido = json.load(archivo)
         self.assertEqual(releido, resumen)
@@ -104,7 +106,8 @@ class PruebasIntegracion(unittest.TestCase):
         # Defecto D6: en Windows se escribían fines de línea \r\n.
         reporte, rechazados, resumen = self.ejecutar(
             FuenteCSV(DATA / 'viajes.csv'))
-        rutas = exportar_resultados(reporte, rechazados, resumen, self.directorio)
+        rutas = exportar_resultados(reporte, rechazados, resumen,
+                                    self.directorio)
         for ruta in rutas.values():
             with self.subTest(archivo=ruta.name):
                 self.assertNotIn(b'\r\n', ruta.read_bytes())
@@ -135,7 +138,8 @@ class PruebasIntegracion(unittest.TestCase):
                         .all().all())
         self.assertEqual(resumen['viajes_seleccionados'], 0)
         self.assertTrue(all(resumen['comprobaciones'].values()))
-        rutas = exportar_resultados(reporte, rechazados, resumen, self.directorio)
+        rutas = exportar_resultados(reporte, rechazados, resumen,
+                                    self.directorio)
         self.assertEqual(len(pd.read_csv(rutas['reporte'])), 6)
 
     def test_determinismo_de_la_aplicacion(self):
@@ -144,7 +148,8 @@ class PruebasIntegracion(unittest.TestCase):
             salida = self.directorio / nombre
             with contextlib.redirect_stdout(io.StringIO()):
                 codigo = main(['--entrada', str(DATA / 'viajes.csv'),
-                               '--desde', '2026-10-01', '--hasta', '2026-10-15',
+                               '--desde', '2026-10-01',
+                               '--hasta', '2026-10-15',
                                '--salida', str(salida)])
             self.assertEqual(codigo, 0)
             contenidos.append({ruta.name: ruta.read_bytes()
@@ -159,8 +164,9 @@ class PruebasIntegracion(unittest.TestCase):
                 _, rechazados, resumen = self.ejecutar(fuente)
                 registros = resumen['registros']
                 self.assertEqual(registros['originales'], 88)
-                self.assertEqual(registros['validos'] + registros['rechazados'],
-                                 registros['originales'])
+                self.assertEqual(
+                    registros['validos'] + registros['rechazados'],
+                    registros['originales'])
                 self.assertEqual(registros['rechazados'], len(rechazados))
 
     def test_main_informa_errores_con_codigo_de_salida(self):

@@ -46,7 +46,7 @@ class FuenteDatos(ABC):
         raise NotImplementedError
 
     def _normalizar_valores(self, tabla):
-        """Convierte cada celda a str o faltante, sin modificar la tabla recibida.
+        """Convierte cada celda a str o faltante sin modificar la tabla.
 
         pandas representa los faltantes de una columna de texto como NaN,
         aunque _como_texto devuelva None; por eso se detectan con pd.isna.
@@ -96,7 +96,7 @@ class FuenteCSV(FuenteDatos):
 
 
 class FuenteJSON(FuenteDatos):
-    """Lee un JSON cuya raíz es una lista de objetos planos (un viaje cada uno)."""
+    """Lee un JSON cuya raíz es una lista de objetos planos (uno por viaje)."""
 
     def cargar(self):
         self.comprobar_archivo()
@@ -116,7 +116,8 @@ class FuenteJSON(FuenteDatos):
         if not isinstance(contenido, list) or not all(
             isinstance(registro, dict) for registro in contenido
         ):
-            raise ErrorDatos('El JSON debe ser una lista de objetos (registros).')
+            raise ErrorDatos(
+                'El JSON debe ser una lista de objetos (registros).')
         return self._normalizar_valores(pd.DataFrame(contenido))
 
 
@@ -127,6 +128,7 @@ def crear_fuente(ruta):
     clase = fuentes.get(ruta.suffix.lower())
     if clase is None:
         raise ErrorDatos(
-            f'Formato no soportado: "{ruta.suffix}". Use un archivo .csv o .json.'
+            f'Formato no soportado: "{ruta.suffix}". '
+            'Use un archivo .csv o .json.'
         )
     return clase(ruta)

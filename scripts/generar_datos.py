@@ -32,7 +32,8 @@ VIAJES_DISENADOS = (
 
 
 def generar_viajes_validos(rng):
-    """Devuelve 80 viajes válidos ordenados por inicio, con ids correlativos."""
+    """Devuelve 80 viajes válidos ordenados por inicio, con ids correlativos.
+    """
     viajes = list(VIAJES_DISENADOS)
     for _ in range(CANTIDAD_ALEATORIOS):
         dia = PRIMER_DIA + timedelta(days=rng.randrange(CANTIDAD_DIAS))

@@ -39,19 +39,23 @@ class PruebasSeleccionPeriodo(unittest.TestCase):
         )
 
     def test_periodo_correcto(self):
-        seleccion = seleccionar_periodo(self.viajes, '2026-10-02', '2026-10-03')
+        seleccion = seleccionar_periodo(self.viajes,
+                                        '2026-10-02', '2026-10-03')
         self.assertEqual(ids(seleccion), ['ECO-0003', 'ECO-0004'])
 
     def test_primer_dia_incluido_desde_medianoche(self):
-        seleccion = seleccionar_periodo(self.viajes, '2026-10-01', '2026-10-01')
+        seleccion = seleccionar_periodo(self.viajes,
+                                        '2026-10-01', '2026-10-01')
         self.assertEqual(ids(seleccion), ['ECO-0002'])
 
     def test_ultimo_dia_incluido_hasta_el_ultimo_segundo(self):
-        seleccion = seleccionar_periodo(self.viajes, '2026-10-03', '2026-10-03')
+        seleccion = seleccionar_periodo(self.viajes,
+                                        '2026-10-03', '2026-10-03')
         self.assertEqual(ids(seleccion), ['ECO-0004'])
 
     def test_viajes_fuera_del_rango_se_excluyen(self):
-        seleccion = seleccionar_periodo(self.viajes, '2026-10-01', '2026-10-03')
+        seleccion = seleccionar_periodo(self.viajes,
+                                        '2026-10-01', '2026-10-03')
         self.assertNotIn('ECO-0001', ids(seleccion))  # un segundo antes
         self.assertNotIn('ECO-0005', ids(seleccion))  # medianoche siguiente
 
@@ -67,7 +71,8 @@ class PruebasSeleccionPeriodo(unittest.TestCase):
             seleccionar_periodo(self.viajes, '2026-10-05', '2026-10-01')
 
     def test_periodo_sin_viajes(self):
-        seleccion = seleccionar_periodo(self.viajes, '2026-11-01', '2026-11-30')
+        seleccion = seleccionar_periodo(self.viajes,
+                                        '2026-11-01', '2026-11-30')
         self.assertTrue(seleccion.empty)
         self.assertEqual(list(seleccion.columns), list(self.viajes.columns))
 
@@ -115,7 +120,8 @@ class PruebasSeleccionPeriodo(unittest.TestCase):
     def test_viaje_limite_del_conjunto_de_datos(self):
         # ECO-0048: inicio 2026-10-07 23:50, fin 2026-10-08 00:15.
         validos, _ = limpiar_viajes(FuenteCSV(DATA / 'viajes.csv').cargar())
-        primera_semana = seleccionar_periodo(validos, '2026-10-01', '2026-10-07')
+        primera_semana = seleccionar_periodo(validos,
+                                             '2026-10-01', '2026-10-07')
         resto = seleccionar_periodo(validos, '2026-10-08', '2026-10-15')
         self.assertEqual(ids(primera_semana)[-1], 'ECO-0048')
         self.assertNotIn('ECO-0048', ids(resto))

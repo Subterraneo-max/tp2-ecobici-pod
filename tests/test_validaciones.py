@@ -77,13 +77,15 @@ class PruebasReglasIndividuales(unittest.TestCase):
 class PruebasLimpieza(unittest.TestCase):
 
     def test_identificador_duplicado(self):
-        validos, rechazados = limpiar_viajes(tabla(viaje(1), viaje(1), viaje(2)))
+        validos, rechazados = limpiar_viajes(
+            tabla(viaje(1), viaje(1), viaje(2)))
         self.assertEqual(list(validos['viaje_id']), ['ECO-0002'])
         self.assertEqual(list(rechazados['motivo']),
                          ['viaje_id duplicado', 'viaje_id duplicado'])
 
     def test_politica_duplicados_rechaza_todas_las_copias(self):
-        entrada = tabla(viaje(5), viaje(1), viaje(5, estacion_origen='Estacion_C'),
+        entrada = tabla(viaje(5), viaje(1),
+                        viaje(5, estacion_origen='Estacion_C'),
                         viaje(5, estacion_destino='Estacion_D'))
         validos, rechazados = limpiar_viajes(entrada)
         self.assertEqual(list(validos['viaje_id']), ['ECO-0001'])
@@ -226,8 +228,8 @@ class PruebasLimpieza(unittest.TestCase):
             'ECO-87': 'viaje_id con formato inválido',
         }
         self.assertEqual(len(rechazados), 8)
-        self.assertEqual(dict(zip(rechazados['viaje_id'], rechazados['motivo'])),
-                         esperado)
+        obtenido = dict(zip(rechazados['viaje_id'], rechazados['motivo']))
+        self.assertEqual(obtenido, esperado)
 
 
 if __name__ == '__main__':

@@ -9,7 +9,8 @@ import argparse
 import sys
 
 from src.fuentes import ErrorDatos, crear_fuente
-from src.pipeline import AplicacionEcobici, convertir_fecha, exportar_resultados
+from src.pipeline import (AplicacionEcobici, convertir_fecha,
+                          exportar_resultados)
 
 
 def fecha_argumento(texto):

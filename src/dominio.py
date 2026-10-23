@@ -11,7 +11,8 @@ class BalanceEstacion:
 
     def __init__(self, estacion):
         if not isinstance(estacion, str) or not estacion.strip():
-            raise ValueError('El nombre de la estación debe ser un texto no vacío.')
+            raise ValueError(
+                'El nombre de la estación debe ser un texto no vacío.')
         self._estacion = estacion
         self._llegadas = 0
         self._salidas = 0
@@ -49,14 +50,15 @@ class BalanceEstacion:
         }
 
     def __repr__(self):
-        return (f'BalanceEstacion({self._estacion!r}, salidas={self._salidas}, '
-                f'llegadas={self._llegadas})')
+        return (f'BalanceEstacion({self._estacion!r}, '
+                f'salidas={self._salidas}, llegadas={self._llegadas})')
 
 
 def _validar_cantidad(cantidad):
     """Una cantidad de movimientos debe ser un entero positivo."""
     if isinstance(cantidad, bool) or not isinstance(cantidad, int):
-        raise TypeError('La cantidad de movimientos debe ser un número entero.')
+        raise TypeError(
+            'La cantidad de movimientos debe ser un número entero.')
     if cantidad <= 0:
         raise ValueError('La cantidad de movimientos debe ser mayor que cero.')
     return cantidad
