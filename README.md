@@ -99,7 +99,7 @@ simulados, no hay una URL de origen.
 | Cantidad de registros | 88: 80 viajes válidos y 8 registros inválidos deliberados |
 | Estaciones | 6 ficticias: `Estacion_A` a `Estacion_F` |
 | Período cubierto | inicios entre el 1 y el 15 de octubre de 2026 |
-| Condiciones de uso | Uso libre con fines educativos; no contienen datos personales |
+| Licencia / condiciones de uso | Uso libre con fines educativos; no contienen datos personales |
 
 **Unidad de análisis:** cada fila (CSV) u objeto (JSON) es **un viaje**.
 
@@ -127,7 +127,7 @@ inválidos y los sesgos está en [`data/README.md`](data/README.md).
 
 ## 4. Tecnologías utilizadas
 
-- **Python 3** (probado con 3.14.5).
+- **Python 3.11 o superior** (probado con 3.14.5).
 - **pandas 3.1.0**: lectura de CSV, operaciones tabulares, conversión de
   fechas y exportación. Es la única dependencia externa.
 - Biblioteca estándar: `abc` (clase abstracta), `argparse` (argumentos de

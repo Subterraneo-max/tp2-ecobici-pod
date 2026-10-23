@@ -41,9 +41,10 @@ class PruebasReglasIndividuales(unittest.TestCase):
                 self.assertTrue(id_valido(valor))
 
     def test_identificador_invalido(self):
-        # El último usa dígitos arábigo-índicos: [0-9] sólo admite ASCII.
+        # 'ECO-' seguido de dígitos arábigo-índicos: \d los aceptaría, pero
+        # [0-9] sólo admite dígitos ASCII.
         for valor in ('ECO-1', 'eco-0001', 'ECO-00012', 'ECO-0001 ',
-                      'XECO-0001', 'ECO_0001', '٠١٢٣',
+                      'XECO-0001', 'ECO_0001', 'ECO-٠١٢٣',
                       None, 1):
             with self.subTest(valor=valor):
                 self.assertFalse(id_valido(valor))

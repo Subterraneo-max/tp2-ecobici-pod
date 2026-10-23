@@ -11,7 +11,6 @@ __pycache__/
 # Editores, herramientas locales y sistema operativo
 .vscode/
 .idea/
-.claude/
 .DS_Store
 Thumbs.db
 desktop.ini

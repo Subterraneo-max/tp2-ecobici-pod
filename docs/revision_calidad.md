@@ -13,9 +13,9 @@ flake8 7.4.1. Fecha: 2026-10-23.
 | Indicador | Resultado |
 |---|---|
 | Pruebas automáticas | 85 ejecutadas, 85 aprobadas (`python -m unittest discover -s tests -v`) |
-| Defectos reales corregidos | 6 (D1 a D6) |
+| Defectos reales corregidos | 7 (D1 a D6 en el código, D7 en una prueba) |
 | Categorías de revisión | 6 obligatorias + nombres, imports, excepciones, rutas y dependencias |
-| Mutaciones deliberadas detectadas por las pruebas | 13 de 13 |
+| Mutaciones deliberadas detectadas por las pruebas | 14 de 14 |
 | Estilo (flake8, PEP 8) | sin avisos |
 
 ## Procedimiento
@@ -31,12 +31,15 @@ flake8 7.4.1. Fecha: 2026-10-23.
    se corrigió el código y se volvió a ejecutar la suite completa. Las
    correcciones D2 a D6 están en el commit `6698aa9`.
 4. **Prueba de mutación.** Sobre una copia temporal del proyecto se
-   introdujeron 13 errores deliberados, uno por vez, para comprobar que la
-   suite los detecta (ver más abajo). El código del repositorio no se modificó.
+   introdujeron errores deliberados, uno por vez, para comprobar que la
+   suite los detecta (13 durante la auditoría y 1 en la revisión final; ver
+   más abajo). El código del repositorio no se modificó.
 5. **Contraste independiente.** El reporte del 1/10 al 7/10 se recalculó con
    un script que sólo usa el módulo `csv` y contadores, sin el código de la
    aplicación. Los seis valores de salidas, llegadas y balance coincidieron.
 6. **Estilo.** `flake8` sobre `src`, `tests` y `scripts`.
+7. **Revisión final** del código, las pruebas y la documentación antes de
+   la entrega. D7 apareció en esta etapa.
 
 ## Defectos encontrados y corregidos
 
@@ -130,6 +133,23 @@ flake8 7.4.1. Fecha: 2026-10-23.
   el JSON.
 - **Prueba:** `test_integracion.test_exportacion_independiente_del_sistema_operativo`
   (antes: `b'\r\n' unexpectedly found` en los tres archivos).
+
+### D7 — Una prueba de dígitos no ASCII no verificaba lo que declaraba
+
+- **Descripción:** `test_identificador_invalido` incluía el caso `'٠١٢٣'`
+  (dígitos arábigo-índicos) con el comentario de que `[0-9]` sólo admite
+  dígitos ASCII. Pero ese texto se rechaza porque le falta el prefijo `ECO-`,
+  cualquiera sea la clase de dígitos del patrón.
+- **Reproducción:** en una copia temporal se cambió el patrón a
+  `ECO-\d{4}` (en Python, `\d` acepta dígitos Unicode como `٠١٢٣`). La
+  prueba original siguió aprobada: no detectaba el cambio.
+- **Causa:** el caso de prueba estaba mal construido y el comentario
+  ("el último...") además señalaba un elemento equivocado de la lista.
+- **Archivo afectado:** `tests/test_validaciones.py`.
+- **Solución:** el caso pasó a ser `'ECO-٠١٢٣'` y se corrigió el comentario.
+- **Prueba:** la misma `test_identificador_invalido`; con el patrón
+  `ECO-\d{4}` ahora falla (`FAILED (failures=1)`) y con el patrón real
+  aprueba.
 
 ## Verificaciones por categoría
 
@@ -236,6 +256,7 @@ proyecto. "Detectada" significa que al menos una prueba falló.
 | Duración cero aceptada (`<` en lugar de `<=`) | detectada |
 | Sin comprobación de calendario (sólo regex) | detectada |
 | `re.search` en lugar de `re.fullmatch` para el id | detectada (3 fallas) |
+| `\d` en lugar de `[0-9]` en el patrón del id | detectada (1 falla) desde la corrección D7; antes no se detectaba |
 | Viajes circulares rechazados | detectada |
 | Estaciones sin movimientos omitidas del reporte | detectada (1 falla) |
 | JSON sin control de "lista de objetos" | detectada (1 falla) |
