@@ -29,7 +29,8 @@ flake8 7.4.1. Fecha: 2026-10-23.
 3. **Corrección guiada por pruebas.** Para cada comportamiento incorrecto se
    escribió primero una prueba que lo reproduce, se comprobó que **fallaba**,
    se corrigió el código y se volvió a ejecutar la suite completa. Las
-   correcciones D2 a D6 están en el commit `6698aa9`.
+   correcciones D2 a D6 están en el commit `cb89ac9` ("Corrige defectos
+   detectados en la auditoría de calidad").
 4. **Prueba de mutación.** Sobre una copia temporal del proyecto se
    introdujeron errores deliberados, uno por vez, para comprobar que la
    suite los detecta (13 durante la auditoría y 1 en la revisión final; ver
